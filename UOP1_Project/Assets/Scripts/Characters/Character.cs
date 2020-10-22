@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,6 +48,7 @@ public class Character : MonoBehaviour
 	private void OrchestrateStateMachine()
 	{
 		stateMachine = new StateMachine();
+		stateMachine.stateChanged += OnStateChanged;
 
 		// create all states and pass in references to this character
 		IdleState idleState = new IdleState(this);
@@ -211,6 +212,13 @@ public class Character : MonoBehaviour
 		SetJumpingState(false); //This will stop the reduction to the gravity, which will then quickly pull down the character
 	}
 
+	public string GetCurrentStateString()
+	{
+		return stateMachine.currentState.ToString();
+	}
+
+	#endregion
+
 	private void UpdateSlide()
 	{
 		// if player has to slide then add sideways speed to make it go down
@@ -227,5 +235,10 @@ public class Character : MonoBehaviour
 			currentSlope = Vector3.Angle(Vector3.up, hitNormal);
 			shouldSlide = currentSlope >= characterController.slopeLimit;
 		}
+	}
+
+	private void OnStateChanged()
+	{
+		// Debug.Log("State changed. Current: " + stateMachine.currentState);
 	}
 }

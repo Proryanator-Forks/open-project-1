@@ -1,10 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StateMachine
 {
-	private State currentState;
+	/// <summary>
+	/// Store the current state
+	/// </summary>
+	/// <value></value>
+	public State currentState { get; private set; }
+	/// <summary>
+	/// Called on state change
+	/// </summary>
+	public Action stateChanged;
 
 	private readonly List<Transition> transitionFromAnyState = new List<Transition>();
 
@@ -28,6 +36,10 @@ public class StateMachine
 
 		currentState?.OnExit();
 		currentState = state;
+		if (stateChanged != null)
+		{
+			stateChanged();
+		}
 
 		currentState.OnEnter();
 	}
