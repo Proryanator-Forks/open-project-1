@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,21 +39,21 @@ public class StateMachine
 
 	private Transition GetTransitionIfAvailable(State currentState)
 	{
-		Transition transitionIfAny = GetNextTransitionFromList(transitionFromAnyState);
+		Transition transitionIfAny = GetNextTransitionFromList(transitionFromAnyState, currentState);
 
 		if (transitionIfAny == null || transitionIfAny.To == currentState)
 		{
-			transitionIfAny = GetNextTransitionFromList(this.currentState.Transitions);
+			transitionIfAny = GetNextTransitionFromList(this.currentState.Transitions, null);
 		}
 
 		return transitionIfAny;
 	}
 
-	private static Transition GetNextTransitionFromList(List<Transition> transitions)
+	private static Transition GetNextTransitionFromList(List<Transition> transitions, State blockState)
 	{
 		foreach (Transition transition in transitions)
 		{
-			if (transition.Condition())
+			if (transition.To != blockState && transition.Condition())
 			{
 				return transition;
 			}

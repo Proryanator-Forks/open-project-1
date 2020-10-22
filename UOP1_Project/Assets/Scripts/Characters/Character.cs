@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,7 +59,6 @@ public class Character : MonoBehaviour
 		idleState.AddTransition(jumpingState, PerformedJumpAction());
 		idleState.AddTransition(walkingState, IsMovingAndGrounded());
 		walkingState.AddTransition(jumpingState, PerformedJumpAction());
-		fallingState.AddTransition(idleState, IsCharacterNotMovingAndGrounded());
 		fallingState.AddTransition(walkingState, IsMovingAndGrounded());
 
 		stateMachine.AddAnyTransition(fallingState, IsFallingAndNotJumping());
@@ -109,7 +108,7 @@ public class Character : MonoBehaviour
 		return inputVector != Vector3.zero;
 	}
 
-	//---- PREDICATES TO DEFINE STATE TRANSITIONS ----
+	#region PREDICATES TO DEFINE STATE TRANSITIONS
 
 	private Func<bool> IsMovingAndGrounded() => () => IsThereInput() && characterController.isGrounded;
 
@@ -119,7 +118,9 @@ public class Character : MonoBehaviour
 
 	private Func<bool> IsFallingAndNotJumping() => () => !characterController.isGrounded && !isJumping;
 
-	//---- METHODS USED TO CONTROL CHARACTER STATE ----
+	#endregion
+
+	#region METHODS USED TO CONTROL CHARACTER STATE
 
 	public void ApplyMovementAndRotate()
 	{
@@ -187,7 +188,10 @@ public class Character : MonoBehaviour
 
 	public bool IsJumpingTooLong(float deltaTime) => deltaTime >= jumpBeginTime + jumpInputDuration;
 
-	//---- COMMANDS ISSUED BY OTHER SCRIPTS ----
+	#endregion
+
+	#region COMMANDS ISSUED BY OTHER SCRIPTS
+
 	public void Move(Vector3 movement)
 	{
 		inputVector = movement;
