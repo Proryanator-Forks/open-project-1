@@ -4,7 +4,15 @@ using UnityEngine;
 
 public class StateMachine
 {
-	private State currentState;
+	/// <summary>
+	/// Store the current state
+	/// </summary>
+	/// <value></value>
+	public State currentState { get; private set; }
+	/// <summary>
+	/// Called on state change
+	/// </summary>
+	public Action stateChanged;
 
 	private readonly List<Transition> transitionFromAnyState = new List<Transition>();
 
@@ -28,6 +36,10 @@ public class StateMachine
 
 		currentState?.OnExit();
 		currentState = state;
+		if (stateChanged != null)
+		{
+			stateChanged();
+		}
 
 		currentState.OnEnter();
 	}
@@ -39,21 +51,21 @@ public class StateMachine
 
 	private Transition GetTransitionIfAvailable(State currentState)
 	{
-		Transition transitionIfAny = GetNextTransitionFromList(transitionFromAnyState);
+		Transition transitionIfAny = GetNextTransitionFromList(transitionFromAnyState, currentState);
 
 		if (transitionIfAny == null || transitionIfAny.To == currentState)
 		{
-			transitionIfAny = GetNextTransitionFromList(this.currentState.Transitions);
+			transitionIfAny = GetNextTransitionFromList(this.currentState.Transitions, null);
 		}
 
 		return transitionIfAny;
 	}
 
-	private static Transition GetNextTransitionFromList(List<Transition> transitions)
+	private static Transition GetNextTransitionFromList(List<Transition> transitions, State blockState)
 	{
 		foreach (Transition transition in transitions)
 		{
-			if (transition.Condition())
+			if (transition.To != blockState && transition.Condition())
 			{
 				return transition;
 			}
